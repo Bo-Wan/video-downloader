@@ -81,7 +81,7 @@ vid = 285925850
 print('Querying new download target...')
 # Get download target
 # query = 'select * from target where dl_stat is NULL or dl_stat = 0 order by vid desc limit 1;'
-query = "select * from target where vid = " + vid
+query = "select * from target where vid = " + str(vid)
 cursor.execute(query)
 result = cursor.fetchall()
 

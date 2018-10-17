@@ -4,6 +4,7 @@ from urllib.request import urlretrieve
 import requests
 import json
 import re
+import string
 
 ########################################################################################################
 # 2422文件，一个一个文件下载
@@ -74,7 +75,7 @@ cursor = conn.cursor()
 defaultDest = '/media/sf_shared/vdata-download'
 BJJFDest = '/media/sf_shared/vdata-download/BJJFanatics/'
 BudoDest = '/media/sf_shared/vdata-download/BudoVideos/'
-
+valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
 vid = sys.argv[1]
 
@@ -113,7 +114,8 @@ else:
 print('Saving destination: [' + savingDest + ']')
 
 # File name
-fileName = str(vid) + ' ' + title + '.mp4'
+rawFileName = str(vid) + ' ' + title + '.mp4'
+fileName = ''.join(c for c in rawFileName if c in valid_chars)
 print('New file name: [' + fileName + ']')
 print('Final target destination: [' + savingDest + fileName + ']')
 

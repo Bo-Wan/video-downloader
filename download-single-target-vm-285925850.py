@@ -67,8 +67,8 @@ def getDownloadLink(vendor, vid):
 
 
 # Get Mariadb cursor
-#conn = pymysql.connect(host='localhost', user='root', password='9ksASd0-123!', database='vdata_download', autocommit=True)
-conn = pymysql.connect(host='localhost', user='root', database='vdata_download', autocommit=True)
+conn = pymysql.connect(host='localhost', user='root', password='9ksASd0-123!', database='vdata_download', autocommit=True)
+#conn = pymysql.connect(host='localhost', user='root', database='vdata_download', autocommit=True)
 cursor = conn.cursor()
 
 defaultDest = '/media/sf_shared/vdata-download'

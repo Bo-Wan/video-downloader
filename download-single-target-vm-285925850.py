@@ -1,3 +1,4 @@
+import sys
 import pymysql
 from urllib.request import urlretrieve
 import requests
@@ -74,62 +75,64 @@ defaultDest = '/media/sf_shared/vdata-download'
 BJJFDest = '/media/sf_shared/vdata-download/BJJFanatics/'
 BudoDest = '/media/sf_shared/vdata-download/BudoVideos/'
 
-while(True):
 
-    print('Querying new download target...')
-    # Get download target
-    query = 'select * from target where dl_stat is NULL or dl_stat = 0 order by vid desc limit 1;'
-    # query = "select * from target where vid = 284022699 order by vid desc limit 1;"
-    cursor.execute(query)
-    result = cursor.fetchall()
+vid = 285925850
 
-    if len(result) is 0:
-        print('Download finished.')
-        exit(0)
+print('Querying new download target...')
+# Get download target
+# query = 'select * from target where dl_stat is NULL or dl_stat = 0 order by vid desc limit 1;'
+query = "select * from target where vid = " + vid
+cursor.execute(query)
+result = cursor.fetchall()
 
-    target = result[0]
+if len(result) is 0:
+    print('Download finished.')
+    exit(0)
 
-    vid = target[1]
-    title = target[2]
-    vendor = target[3]
-    stat = target[4]
+target = result[0]
 
-    # Saving Destination
-    savingDest = defaultDest;
-    if vendor == 'BJJ Fanatics':
-        print('Vid = [' + str(vid) + ']\nVendor = [BJJ Fanatics]')
-        savingDest = BJJFDest
+vid = target[1]
+title = target[2]
+vendor = target[3]
+stat = target[4]
 
-    elif vendor == 'BudoVideos':
-        print('Vid = [' + str(vid) + ']\nVendor = [BudoVideos]')
-        savingDest = BudoDest;
+# Saving Destination
+savingDest = defaultDest;
+if vendor == 'BJJ Fanatics':
+    print('Vid = [' + str(vid) + ']\nVendor = [BJJ Fanatics]')
+    savingDest = BJJFDest
 
-    else:
-        print('Fatal error: vid ' + vid + ' vendor type not recognised')
-        exit(0)
+elif vendor == 'BudoVideos':
+    print('Vid = [' + str(vid) + ']\nVendor = [BudoVideos]')
+    savingDest = BudoDest;
 
-    print('Saving destination: [' + savingDest + ']')
+else:
+    print('Fatal error: vid ' + vid + ' vendor type not recognised')
+    exit(0)
 
-    # File name
-    fileName = str(vid) + ' ' + title + '.mp4'
-    print('New file name: [' + fileName + ']')
-    print('Final target destination: [' + savingDest + fileName + ']')
+print('Saving destination: [' + savingDest + ']')
 
-    # Get url
-    print('Getting url...')
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-    downloadUrl = getDownloadLink(vendor, str(vid))
-    print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ')
-    print('Downloading url get: ' + downloadUrl)
+# File name
+# fileName = str(vid) + ' ' + title + '.mp4'
+fileName = '285925850 Pillars Side Control Mastery Volume 7 by Stephen Whittier.mp4'
+print('New file name: [' + fileName + ']')
+print('Final target destination: [' + savingDest + fileName + ']')
 
-    # Download
-    print('Starting download...')
-    urlretrieve (downloadUrl, savingDest + fileName)
-    print('Downloading Done!')
+# Get url
+print('Getting url...')
+print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+downloadUrl = getDownloadLink(vendor, str(vid))
+print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ')
+print('Downloading url get: ' + downloadUrl)
 
-    # DB update
-    print('Updating database...')
-    query = "update target set dl_stat = 1 where vid = " + str(vid) + ";"
-    print("exec: " + query)
-    cursor.execute(query)
-    print('Database updated!')
+# Download
+print('Starting download...')
+urlretrieve (downloadUrl, savingDest + fileName)
+print('Downloading Done!')
+
+# DB update
+print('Updating database...')
+query = "update target set dl_stat = 1 where vid = " + str(vid) + ";"
+print("exec: " + query)
+cursor.execute(query)
+print('Database updated!')

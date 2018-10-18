@@ -4,6 +4,8 @@ import requests
 import json
 import re
 import string
+from time import strftime
+import sys
 
 ########################################################################################################
 # 2422文件，一个一个文件下载
@@ -65,10 +67,20 @@ def getDownloadLink(vendor, vid):
        print("ERROR: No title found for video " + vid)
        exit(0)
 
+dbPass = '9ksASd0-123!'
+singleTarget = False
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == 'mac':
+        dbPass = ''
+
+if len(sys.argv) > 2:
+    vid = sys.argv[2]
+    singleTarget = True
+
 
 # Get Mariadb cursor
-#conn = pymysql.connect(host='localhost', user='root', password='9ksASd0-123!', database='vdata_download', autocommit=True)
-conn = pymysql.connect(host='localhost', user='root', database='vdata_download', autocommit=True)
+conn = pymysql.connect(host='localhost', user='root', password=dbPass, database='vdata_download', autocommit=True)
 cursor = conn.cursor()
 
 defaultDest = '/media/sf_shared/vdata-download'
@@ -78,10 +90,12 @@ valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
 while(True):
 
-    print('Querying new download target...')
+    print('[' + strftime("%Y-%m-%d %H:%M:%S") + '] ' + 'Querying new download target...')
     # Get download target
     query = 'select * from target where dl_stat is NULL or dl_stat = 0 order by vid desc limit 1;'
-    # query = "select * from target where vid = 284022699 order by vid desc limit 1;"
+
+    if singleTarget == True:
+        query = 'select * from target where vid = ' + vid
     cursor.execute(query)
     result = cursor.fetchall()
 
@@ -119,16 +133,16 @@ while(True):
     print('Final target destination: [' + savingDest + fileName + ']')
 
     # Get url
-    print('Getting url...')
+    print('[' + strftime("%Y-%m-%d %H:%M:%S") + '] ' + 'Getting url...')
     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     downloadUrl = getDownloadLink(vendor, str(vid))
     print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ')
-    print('Downloading url get: ' + downloadUrl)
+    print('[' + strftime("%Y-%m-%d %H:%M:%S") + '] ' + 'Downloading url get: ' + downloadUrl)
 
     # Download
     print('Starting download...')
     urlretrieve (downloadUrl, savingDest + fileName)
-    print('Downloading Done!')
+    print('[' + strftime("%Y-%m-%d %H:%M:%S") + '] ' + 'Downloading Done!')
 
     # DB update
     print('Updating database...')
@@ -136,3 +150,7 @@ while(True):
     print("exec: " + query)
     cursor.execute(query)
     print('Database updated!')
+
+    if singleTarget == True:
+        print('Single target downloading completed.')
+        exit(0);

@@ -10,7 +10,7 @@ import sys
 ########################################################################################################
 # 2422文件，一个一个文件下载
 # • 控制进度，用vid加extra column,下载完没有
-#     vdata_download
+#     vdata
 #     alter table target add column dl_stat BOOL;
 #     1 = downloaded + succeeded; 0 = download started but not succeeded; NULL == not downloaded
 #     select * from target order by vid desc limit 1;
@@ -80,7 +80,7 @@ if len(sys.argv) > 2:
 
 
 # Get Mariadb cursor
-conn = pymysql.connect(host='localhost', user='root', password=dbPass, database='vdata_download', autocommit=True)
+conn = pymysql.connect(host='localhost', user='root', password=dbPass, database='vdata', autocommit=True)
 cursor = conn.cursor()
 
 defaultDest = '/media/sf_shared/vdata-download'
